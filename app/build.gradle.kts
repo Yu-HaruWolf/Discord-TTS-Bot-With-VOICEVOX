@@ -14,6 +14,9 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    maven( 
+        url = "https://m2.dv8tion.net/releases"
+    )
 }
 
 dependencies {
@@ -23,6 +26,8 @@ dependencies {
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
     implementation("net.dv8tion:JDA:5.0.0-beta.20")
+    implementation("ch.qos.logback:logback-classic:1.2.8")
+    implementation("com.sedmelluq:lavaplayer:1.3.77")
 }
 
 application {
