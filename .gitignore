@@ -1,3 +1,5 @@
+# For MacOS
+.DS_STORE
 # For Editors
 .vscode
 .idea
