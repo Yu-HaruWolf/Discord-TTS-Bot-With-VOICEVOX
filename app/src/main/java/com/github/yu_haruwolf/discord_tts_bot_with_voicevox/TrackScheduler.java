@@ -1,5 +1,8 @@
 package com.github.yu_haruwolf.discord_tts_bot_with_voicevox;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -29,6 +32,11 @@ public class TrackScheduler extends AudioEventAdapter{
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        try {
+            Files.delete(Path.of(track.getIdentifier()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (endReason.mayStartNext) {
             nextTrack();
         }

@@ -23,6 +23,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.UUID;
 
 
 public class AudioController {
@@ -67,11 +68,15 @@ public class AudioController {
         audioManager.closeAudioConnection();
     }
 
-    public void playSound(Guild guild) throws IOException, InterruptedException {
+    public void setVolume(Guild guild, int level) {
+        getGuildAudioManager(guild).setVolume(level);
+    }
+
+    public void textToSpeech(Guild guild, String text) throws IOException, InterruptedException {
         GuildAudioManager guildAudioManager = getGuildAudioPlayer(guild);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest
-                .newBuilder(URI.create("http://127.0.0.1:50021/audio_query?text=Hello&speaker=3"))
+                .newBuilder(URI.create("http://127.0.0.1:50021/audio_query?text=" + text + "&speaker=3"))
                 .version(HttpClient.Version.HTTP_1_1)
                 .method("POST", HttpRequest.BodyPublishers.ofString(""))
                 .header("accept", "application/json")
@@ -83,7 +88,8 @@ public class AudioController {
                 .method("POST", HttpRequest.BodyPublishers.ofString(response.body()))
                 .header("accept", "audio/wav")
                 .build();
-        HttpResponse<Path> responseAudio = client.send(request, HttpResponse.BodyHandlers.ofFile(Path.of("audio.wav")));
+        String fileName = UUID.randomUUID().toString();
+        HttpResponse<Path> responseAudio = client.send(request, HttpResponse.BodyHandlers.ofFile(Path.of("audios/" + fileName + ".wav")));
 
         audioPlayerManager.loadItemOrdered(guildAudioManager, responseAudio.body().toString(), new AudioLoadResultHandler() {
             @Override
