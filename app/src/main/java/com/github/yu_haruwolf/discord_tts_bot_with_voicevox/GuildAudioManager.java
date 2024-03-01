@@ -14,6 +14,10 @@ public class GuildAudioManager {
         player.addListener(scheduler);
     }
 
+    public TrackScheduler getScheduler() {
+        return scheduler;
+    }
+
     public AudioPlayerSendHandler getSendHandler() {
         return new AudioPlayerSendHandler(player);
     }
