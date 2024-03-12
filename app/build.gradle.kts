@@ -28,6 +28,7 @@ dependencies {
     implementation("net.dv8tion:JDA:5.0.0-beta.20")
     implementation("ch.qos.logback:logback-classic:1.2.8")
     implementation("com.sedmelluq:lavaplayer:1.3.77")
+    implementation("org.xerial:sqlite-jdbc:3.45.1.0")
 }
 
 application {
