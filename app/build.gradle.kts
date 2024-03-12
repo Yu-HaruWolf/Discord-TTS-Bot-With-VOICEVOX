@@ -24,9 +24,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
 
     // This dependency is used by the application.
-    implementation("com.google.guava:guava:31.1-jre")
+    implementation("com.google.guava:guava:33.0.0-jre")
     implementation("net.dv8tion:JDA:5.0.0-beta.20")
-    implementation("ch.qos.logback:logback-classic:1.2.8")
+    implementation("ch.qos.logback:logback-classic:1.4.14")
     implementation("com.sedmelluq:lavaplayer:1.3.77")
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
 }
