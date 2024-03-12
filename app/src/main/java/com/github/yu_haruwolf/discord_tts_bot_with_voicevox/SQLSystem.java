@@ -30,7 +30,7 @@ public class SQLSystem {
         result.next();
         if (Integer.parseInt(result.getString(1)) <= 0) {
             // If the table doesn't exist, create the table.
-            statement.execute("CREATE TABLE servers(id PRIMARY KEY, volume)");
+            statement.execute("CREATE TABLE servers(id PRIMARY KEY, volume INTEGER)");
         } else {
             // If the table exists, check the columns.
             String[] columns = {"id", "volume"};
@@ -46,4 +46,18 @@ public class SQLSystem {
             }
         }
     }
+
+    public int getVolume(String id) throws SQLException{
+        ResultSet resultSet = statement.executeQuery("SELECT volume FROM servers WHERE id="+ id);
+        if(resultSet.next()) {
+            return Integer.parseInt(resultSet.getString(1));
+        }
+        updateVolume(id, 10);
+        return 10;
+    }
+
+    public void updateVolume(String id, int volume) throws SQLException {
+        statement.execute("REPLACE INTO servers(id, volume) VALUES (" + id + "," + volume + ")");
+    }
+
 }
