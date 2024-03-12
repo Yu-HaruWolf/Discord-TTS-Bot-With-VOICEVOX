@@ -1,4 +1,4 @@
-package com.github.yu_haruwolf.discord_tts_bot_with_voicevox;
+package com.github.yu_haruwolf.discord_tts_bot_with_voicevox.audio;
 
 import java.io.IOException;
 import java.nio.file.Files;

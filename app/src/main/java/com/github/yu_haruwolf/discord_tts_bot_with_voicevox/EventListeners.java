@@ -2,6 +2,7 @@ package com.github.yu_haruwolf.discord_tts_bot_with_voicevox;
 
 import javax.annotation.Nonnull;
 
+import com.github.yu_haruwolf.discord_tts_bot_with_voicevox.audio.AudioController;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

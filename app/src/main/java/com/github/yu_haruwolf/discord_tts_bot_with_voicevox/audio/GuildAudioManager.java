@@ -1,4 +1,4 @@
-package com.github.yu_haruwolf.discord_tts_bot_with_voicevox;
+package com.github.yu_haruwolf.discord_tts_bot_with_voicevox.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
