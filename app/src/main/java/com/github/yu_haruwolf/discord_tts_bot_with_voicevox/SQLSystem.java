@@ -11,6 +11,7 @@ public class SQLSystem {
     Connection connection;
     Statement statement;
     Logger logger;
+
     public SQLSystem() {
         logger = LoggerFactory.getLogger(SQLSystem.class);
         try {

@@ -1,6 +1,7 @@
 package com.github.yu_haruwolf.discord_tts_bot_with_voicevox.audio;
 
 
+import com.github.yu_haruwolf.discord_tts_bot_with_voicevox.SQLSystem;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -21,6 +22,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
@@ -30,10 +32,13 @@ public class AudioController {
     final HashMap<Guild, GuildAudioManager> guildAudioManagers;
     final AudioPlayerManager audioPlayerManager;
     final Logger logger;
+    final SQLSystem sqlSystem;
+
     public AudioController() {
         this.logger = LoggerFactory.getLogger(AudioController.class);
         guildAudioManagers = new HashMap<>();
         audioPlayerManager = new DefaultAudioPlayerManager();
+        this.sqlSystem = new SQLSystem();
         AudioSourceManagers.registerLocalSource(audioPlayerManager);
         AudioSourceManagers.registerRemoteSources(audioPlayerManager);
     }
@@ -41,7 +46,14 @@ public class AudioController {
     private GuildAudioManager getGuildAudioManager(Guild guild) {
         GuildAudioManager guildAudioManager;
         if (!guildAudioManagers.containsKey(guild)) {
-            guildAudioManagers.put(guild, new GuildAudioManager(audioPlayerManager));
+            try {
+                guildAudioManagers.put(guild, new GuildAudioManager(audioPlayerManager, sqlSystem.getVolume(guild.getId())));
+            } catch (SQLException e) {
+                logger.error(e.toString());
+                logger.error("SQL State: " + e.getSQLState());
+                logger.info("Guild " + guild.getId() + " volume is set to 10.");
+                guildAudioManagers.put(guild, new GuildAudioManager(audioPlayerManager, 10));
+            }
         }
         guildAudioManager = guildAudioManagers.get(guild);
         return guildAudioManager;
@@ -70,6 +82,13 @@ public class AudioController {
 
     public void setVolume(Guild guild, int level) {
         getGuildAudioManager(guild).setVolume(level);
+        try {
+            sqlSystem.updateVolume(guild.getId(), level);
+        } catch (SQLException e) {
+            logger.error(e.toString());
+            logger.error("SQL State: " + e.getSQLState());
+            logger.error("Failed to save volume setting.");
+        }
     }
 
     public void textToSpeech(Guild guild, String text) throws IOException, InterruptedException {

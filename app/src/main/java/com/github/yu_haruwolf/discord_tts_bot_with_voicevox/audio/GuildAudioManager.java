@@ -7,9 +7,9 @@ public class GuildAudioManager {
     private final AudioPlayer player;
     private final TrackScheduler scheduler;
 
-    public GuildAudioManager(AudioPlayerManager manager) {
+    public GuildAudioManager(AudioPlayerManager manager, int volume) {
         player = manager.createPlayer();
-        player.setVolume(8);
+        player.setVolume(volume);
         scheduler = new TrackScheduler(player);
         player.addListener(scheduler);
     }
