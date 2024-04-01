@@ -43,14 +43,20 @@ public class SQLSystem {
             }
             // If there are lack of column(s), add it.
             for(String column : set) {
-                statement.execute("ALTER TABLE servers ADD COLUMN " + column);
+                query = "ALTER TABLE servers ADD COLUMN ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.setString(1, column);
+                preparedStatement.executeQuery();
             }
         }
     }
 
-    public int getVolume(String id) throws SQLException{
-        ResultSet resultSet = statement.executeQuery("SELECT volume FROM servers WHERE id="+ id);
-        if(resultSet.next()) {
+    public int getVolume(String id) throws SQLException {
+        String query = "SELECT volume FROM servers WHERE id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
             return Integer.parseInt(resultSet.getString(1));
         }
         updateVolume(id, 10);
@@ -58,7 +64,27 @@ public class SQLSystem {
     }
 
     public void updateVolume(String id, int volume) throws SQLException {
-        statement.execute("REPLACE INTO servers(id, volume) VALUES (" + id + "," + volume + ")");
+        String query = "REPLACE INTO servers(id, volume) VALUES (?, "+ volume + ")";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1,id);
+        preparedStatement.execute();
+    }
+
+    public int getSpeakerId(String userId) throws SQLException {
+        String query = "SELECT speaker FROM users WHERE id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, userId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if(resultSet.next()) {
+            return Integer.parseInt(resultSet.getString(1));
+        }
+        return 3;
+    }
+    public void updateSpeakerId(String userId, int speakerId) throws SQLException {
+        String query = "REPLACE INTO users(id, speaker) VALUES (?, " + speakerId + ")";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, userId);
+        preparedStatement.execute();
     }
 
 }

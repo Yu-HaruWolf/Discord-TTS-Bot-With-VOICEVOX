@@ -1,5 +1,7 @@
 package com.github.yu_haruwolf.discord_tts_bot_with_voicevox;
 
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -7,12 +9,10 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-
 public class Bot {
     JDA jda;
     Logger logger;
+
     public static void main(String[] args) {
         new Bot();
     }
@@ -35,9 +35,12 @@ public class Bot {
         logger.info("Logged In! " + jda.getSelfUser().getName());
         for (Guild guild : jda.getGuilds()) {
             guild.updateCommands().addCommands(
-                Commands.slash("connect", "Connect to voice channel."),
-                Commands.slash("disconnect", "Disconnect from voice channel."),
-                Commands.slash("volume", "Set the voice volume.").addOption(OptionType.INTEGER, "level", "You can set 0-100.", true)
+                    Commands.slash("connect", "Connect to voice channel."),
+                    Commands.slash("disconnect", "Disconnect from voice channel."),
+                    Commands.slash("volume", "Set the voice volume.").addOption(OptionType.INTEGER, "level", "You can set 0-100.", true),
+                    Commands.slash("set-speaker", "Select the speaker").addOption(OptionType.INTEGER, "speaker", "Speaker", true),
+                    Commands.slash("list-speaker", "Show the list of speaker"),
+                    Commands.slash("reload-speaker", "Reload the list of speakers")
             ).queue();
         }
     }

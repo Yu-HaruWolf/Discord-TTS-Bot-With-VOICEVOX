@@ -29,6 +29,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.14")
     implementation("com.sedmelluq:lavaplayer:1.3.77")
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
 }
 
 application {
