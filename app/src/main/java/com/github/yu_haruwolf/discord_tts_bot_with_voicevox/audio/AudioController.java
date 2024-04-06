@@ -91,18 +91,18 @@ public class AudioController {
         }
     }
 
-    public void textToSpeech(Guild guild, String text) throws IOException, InterruptedException {
+    public void textToSpeech(Guild guild, String text, int speaker) throws IOException, InterruptedException {
         GuildAudioManager guildAudioManager = getGuildAudioPlayer(guild);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest
-                .newBuilder(URI.create("http://127.0.0.1:50021/audio_query?text=" + text + "&speaker=3"))
+                .newBuilder(URI.create("http://127.0.0.1:50021/audio_query?text=" + text + "&speaker=" + speaker))
                 .version(HttpClient.Version.HTTP_1_1)
                 .method("POST", HttpRequest.BodyPublishers.ofString(""))
                 .header("accept", "application/json")
                 .build();
         var response = client.send(request, HttpResponse.BodyHandlers.ofString());
         request = HttpRequest
-                .newBuilder(URI.create("http://127.0.0.1:50021/synthesis?speaker=3&enable_interrogative_upspeak=true"))
+                .newBuilder(URI.create("http://127.0.0.1:50021/synthesis?speaker="+ speaker + "&enable_interrogative_upspeak=true"))
                 .version(HttpClient.Version.HTTP_1_1)
                 .method("POST", HttpRequest.BodyPublishers.ofString(response.body()))
                 .header("accept", "audio/wav")

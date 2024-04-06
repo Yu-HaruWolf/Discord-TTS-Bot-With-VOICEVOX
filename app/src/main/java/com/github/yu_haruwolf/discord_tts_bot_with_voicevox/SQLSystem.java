@@ -5,12 +5,15 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class SQLSystem {
     Connection connection;
     Statement statement;
     Logger logger;
+    static Map<String, Integer> cacheMap = new HashMap<>();
 
     public SQLSystem() {
         logger = LoggerFactory.getLogger(SQLSystem.class);
@@ -71,12 +74,17 @@ public class SQLSystem {
     }
 
     public int getSpeakerId(String userId) throws SQLException {
+        if(cacheMap.containsKey(userId)) {
+            return cacheMap.get(userId);
+        }
         String query = "SELECT speaker FROM users WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, userId);
         ResultSet resultSet = preparedStatement.executeQuery();
         if(resultSet.next()) {
-            return Integer.parseInt(resultSet.getString(1));
+            int result = Integer.parseInt(resultSet.getString(1));
+            cacheMap.put(userId, result);
+            return result;
         }
         return 3;
     }
@@ -85,6 +93,11 @@ public class SQLSystem {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, userId);
         preparedStatement.execute();
+        cacheMap.put(userId, speakerId);
+    }
+
+    public void cleanCache() {
+        cacheMap = new HashMap<>();
     }
 
 }

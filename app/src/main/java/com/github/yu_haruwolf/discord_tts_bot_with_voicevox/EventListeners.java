@@ -56,21 +56,21 @@ public class EventListeners extends ListenerAdapter {
                 case "disconnect":
                     audioController.disconnectFromVoiceChannel(event.getGuild());
                     break;
-                case "play":
-                    try {
-                        audioController.textToSpeech(event.getGuild(), "Play");
-                    } catch (IOException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    break;
                 case "shutdown":
                     System.exit(0);
                     break;
                 default:
                     if (event.getGuild().getAudioManager().isConnected()) {
                         try {
-                            audioController.textToSpeech(event.getGuild(), event.getMessage().getContentDisplay());
+                            try {
+                                int speaker = sqlSystem.getSpeakerId(event.getAuthor().getId());
+                                audioController.textToSpeech(event.getGuild(), event.getMessage().getContentDisplay(), sqlSystem.getSpeakerId(event.getAuthor().getId()));
+                            } catch (SQLException e) {
+                                logger.error(e.getMessage());
+                                audioController.textToSpeech(event.getGuild(), event.getMessage().getContentDisplay(), 3);
+                            }
                         } catch (IOException | InterruptedException e) {
+                            logger.error(e.getMessage());
                             e.printStackTrace();
                         }
                     }
