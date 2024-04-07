@@ -40,4 +40,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: DiscordTTSBotWithVOICEVOX
-        path: app/build/libs/app-all.jar
+        path: app/build/libs/discord-tts-bot-with-voicevox.jar
