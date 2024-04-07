@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 public class Bot {
     JDA jda;
     Logger logger;
+    public static final SQLSystem sqlSystem = new SQLSystem();
 
     public static void main(String[] args) {
         new Bot();

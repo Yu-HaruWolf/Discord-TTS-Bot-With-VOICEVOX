@@ -32,7 +32,7 @@ public class EventListeners extends ListenerAdapter {
     public EventListeners() {
         this.logger = LoggerFactory.getLogger(EventListeners.class);
         audioController = new AudioController();
-        this.sqlSystem = new SQLSystem();
+        this.sqlSystem = Bot.sqlSystem;
         try {
             this.speakersMap = getSpeakers();
         } catch (IOException | InterruptedException e) {

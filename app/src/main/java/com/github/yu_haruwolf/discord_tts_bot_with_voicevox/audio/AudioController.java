@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
+import com.github.yu_haruwolf.discord_tts_bot_with_voicevox.Bot;
+
 
 public class AudioController {
     final HashMap<Guild, GuildAudioManager> guildAudioManagers;
@@ -38,7 +40,7 @@ public class AudioController {
         this.logger = LoggerFactory.getLogger(AudioController.class);
         guildAudioManagers = new HashMap<>();
         audioPlayerManager = new DefaultAudioPlayerManager();
-        this.sqlSystem = new SQLSystem();
+        this.sqlSystem = Bot.sqlSystem;
         AudioSourceManagers.registerLocalSource(audioPlayerManager);
         AudioSourceManagers.registerRemoteSources(audioPlayerManager);
     }
