@@ -67,14 +67,10 @@ public class AudioController {
         return guildAudioManager;
     }
 
-    public void connectToVoiceChannel(VoiceChannel voiceChannel) {
+    public void connectToVoiceChannel(VoiceChannel voiceChannel) throws IllegalArgumentException, UnsupportedOperationException, InsufficientPermissionException{
         Guild guild = voiceChannel.getGuild();
         AudioManager audioManager = guild.getAudioManager();
-        try {
-            audioManager.openAudioConnection(voiceChannel);
-        } catch (InsufficientPermissionException e) {
-            e.printStackTrace();
-        }
+        audioManager.openAudioConnection(voiceChannel);
     }
 
     public void disconnectFromVoiceChannel(Guild guild) {
@@ -87,9 +83,8 @@ public class AudioController {
         try {
             sqlSystem.updateVolume(guild.getId(), level);
         } catch (SQLException e) {
-            logger.error(e.toString());
+            logger.error("Failed to save volume setting.", e);
             logger.error("SQL State: " + e.getSQLState());
-            logger.error("Failed to save volume setting.");
         }
     }
 
