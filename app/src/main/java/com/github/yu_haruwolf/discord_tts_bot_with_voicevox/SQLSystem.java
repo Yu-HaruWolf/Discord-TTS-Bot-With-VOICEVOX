@@ -13,10 +13,12 @@ public class SQLSystem {
     Connection connection;
     Statement statement;
     Logger logger;
-    static Map<String, Integer> cacheMap = new HashMap<>();
+    Map<String, Integer> cacheSpeakerMap = new HashMap<>();
+    Map<String, Integer> cacheVolumeMap = new HashMap<>();
 
     public SQLSystem() {
         logger = LoggerFactory.getLogger(SQLSystem.class);
+        cleanCache();
         try {
             // Connect to the databases.
             connection = DriverManager.getConnection("jdbc:sqlite:data.db");
@@ -55,12 +57,16 @@ public class SQLSystem {
     }
 
     public int getVolume(String id) throws SQLException {
+        if(!cacheVolumeMap.containsKey(id)) {
+            return cacheVolumeMap.get(id);
+        }
         String query = "SELECT volume FROM servers WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
-            return Integer.parseInt(resultSet.getString(1));
+            cacheVolumeMap.put(id, resultSet.getInt(1));
+            return resultSet.getInt(1);
         }
         updateVolume(id, 10);
         return 10;
@@ -71,11 +77,12 @@ public class SQLSystem {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1,id);
         preparedStatement.execute();
+        cacheVolumeMap.put(id, volume);
     }
 
     public int getSpeakerId(String userId) throws SQLException {
-        if(cacheMap.containsKey(userId)) {
-            return cacheMap.get(userId);
+        if(cacheSpeakerMap.containsKey(userId)) {
+            return cacheSpeakerMap.get(userId);
         }
         String query = "SELECT speaker FROM users WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -83,7 +90,7 @@ public class SQLSystem {
         ResultSet resultSet = preparedStatement.executeQuery();
         if(resultSet.next()) {
             int result = Integer.parseInt(resultSet.getString(1));
-            cacheMap.put(userId, result);
+            cacheSpeakerMap.put(userId, result);
             return result;
         }
         return 3;
@@ -93,11 +100,11 @@ public class SQLSystem {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, userId);
         preparedStatement.execute();
-        cacheMap.put(userId, speakerId);
+        cacheSpeakerMap.put(userId, speakerId);
     }
 
     public void cleanCache() {
-        cacheMap = new HashMap<>();
+        cacheSpeakerMap = new HashMap<>();
+        cacheVolumeMap = new HashMap<>();
     }
-
 }
