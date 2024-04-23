@@ -57,7 +57,7 @@ public class SQLSystem {
     }
 
     public int getVolume(String id) throws SQLException {
-        if(!cacheVolumeMap.containsKey(id)) {
+        if(cacheVolumeMap.containsKey(id)) {
             return cacheVolumeMap.get(id);
         }
         String query = "SELECT volume FROM servers WHERE id = ?";
