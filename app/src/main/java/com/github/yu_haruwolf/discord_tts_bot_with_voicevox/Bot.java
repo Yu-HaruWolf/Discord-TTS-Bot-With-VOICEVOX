@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -43,7 +44,9 @@ public class Bot {
                 Commands.slash("disconnect", "Disconnect from voice channel.")
                         .setDescriptionLocalization(DiscordLocale.JAPANESE, "ボイスチャンネルから切断します。"),
                 Commands.slash("volume", "Set the voice volume.").addOption(OptionType.INTEGER, "level", "You can set 0-100.", true)
-                        .setDescriptionLocalization(DiscordLocale.JAPANESE, "声の音量を設定します。"),
+                        .setDescriptionLocalization(DiscordLocale.JAPANESE,
+                                "声の音量を設定します。")
+                        .setDefaultPermissions(DefaultMemberPermissions.DISABLED),
                 Commands.slash("set-speaker", "Select the speaker").addOption(OptionType.INTEGER, "speaker", "Speaker", true)
                         .setDescriptionLocalization(DiscordLocale.JAPANESE, "話者を選択します。"),
                 Commands.slash("list-speaker", "Show the list of speaker")
