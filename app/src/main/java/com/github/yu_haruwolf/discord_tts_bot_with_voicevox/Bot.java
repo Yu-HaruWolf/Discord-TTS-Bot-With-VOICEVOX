@@ -8,6 +8,12 @@ import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +27,10 @@ public class Bot {
     }
 
     Bot() {
+        try {
+            Files.createDirectory(Paths.get("./audios"));
+        } catch (IOException e) {
+        }
         logger = LoggerFactory.getLogger(Bot.class);
         String token = System.getenv("TOKEN_DISCORD_TTS_BOT_WITH_VOICEVOX");
         try {
