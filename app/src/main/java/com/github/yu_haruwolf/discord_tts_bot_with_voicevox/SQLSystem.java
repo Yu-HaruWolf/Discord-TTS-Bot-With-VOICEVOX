@@ -31,6 +31,7 @@ public class SQLSystem {
 
     void initDatabase() throws SQLException {
         // Check existence of table
+        // Server Table
         String query = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='servers'";
         ResultSet result = statement.executeQuery(query);
         result.next();
@@ -49,6 +50,29 @@ public class SQLSystem {
             // If there are lack of column(s), add it.
             for(String column : set) {
                 query = "ALTER TABLE servers ADD COLUMN ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.setString(1, column);
+                preparedStatement.executeQuery();
+            }
+        }
+        query = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='users'";
+        result = statement.executeQuery(query);
+        result.next();
+        if (Integer.parseInt(result.getString(1)) <= 0) {
+            // If the table doesn't exist, create the table.
+            statement.execute("CREATE TABLE users(id PRIMARY KEY, speaker INTEGER)");
+        } else {
+            // If the table exists, check the columns.
+            String[] columns = {"id", "speaker"};
+            HashSet<String> set = new HashSet<>(Arrays.asList(columns));
+            query = "SELECT name FROM pragma_table_info('speaker')";
+            result = statement.executeQuery(query);
+            while(result.next()) {
+                set.remove(result.getString(1));
+            }
+            // If there are lack of column(s), add it.
+            for(String column : set) {
+                query = "ALTER TABLE speaker ADD COLUMN ?";
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, column);
                 preparedStatement.executeQuery();
