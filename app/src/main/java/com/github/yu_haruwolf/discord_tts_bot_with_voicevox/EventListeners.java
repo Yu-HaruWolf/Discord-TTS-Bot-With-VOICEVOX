@@ -3,6 +3,9 @@ package com.github.yu_haruwolf.discord_tts_bot_with_voicevox;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.yu_haruwolf.discord_tts_bot_with_voicevox.audio.AudioController;
+
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -10,6 +13,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
+
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +33,13 @@ public class EventListeners extends ListenerAdapter {
     final Logger logger;
     final SQLSystem sqlSystem;
     Map<Integer, String> speakersMap;
+    Map<Guild, GuildManager> guildManagers;
 
     public EventListeners() {
         this.logger = LoggerFactory.getLogger(EventListeners.class);
         audioController = new AudioController();
         this.sqlSystem = Bot.sqlSystem;
+        this.guildManagers = new HashMap<>();
         try {
             this.speakersMap = getSpeakers();
         } catch (IOException | InterruptedException e) {
@@ -45,8 +51,9 @@ public class EventListeners extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
+        Guild guild = event.getGuild();
         if (!event.getAuthor().isBot() && !event.isWebhookMessage()) {
-            if (event.getGuild().getAudioManager().isConnected()) {
+            if (event.getGuild().getAudioManager().isConnected() && getGuildManager(guild).containsChannel(event.getChannel())) {
                 try {
                     try {
                         int speaker = sqlSystem.getSpeakerId(event.getAuthor().getId());
@@ -67,10 +74,13 @@ public class EventListeners extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         DiscordLocale userLocale = event.getUserLocale();
+        Guild guild = event.getGuild();
         switch (event.getInteraction().getName()) {
             case "connect":
                 try {
                     VoiceChannel voiceChannel = event.getMember().getVoiceState().getChannel().asVoiceChannel();
+                    GuildManager guildManager = getGuildManager(guild);
+                    guildManager.addReadAloudTargetChannel(event.getChannel());                   
                     audioController.connectToVoiceChannel(voiceChannel);
                     switch (userLocale) {
                         case JAPANESE ->
@@ -113,6 +123,8 @@ public class EventListeners extends ListenerAdapter {
                 break;
             case "disconnect":
                 audioController.disconnectFromVoiceChannel(event.getGuild());
+                GuildManager guildManager = getGuildManager(event.getGuild());
+                guildManager.clearReadAloudTargetChannel();
                 switch (userLocale) {
                     case JAPANESE ->
                         event.reply("切断しました。").queue();
@@ -205,5 +217,17 @@ public class EventListeners extends ListenerAdapter {
             }
         }
         return speakers;
+    }
+
+    private GuildManager getGuildManager(Guild guild) {
+        if(!guildManagers.containsKey(guild)) {
+            guildManagers.put(guild, new GuildManager());
+        }
+        return guildManagers.get(guild);
+    }
+    
+    private boolean isReadAloudTargetChannel(Guild guild, Channel channel) {
+        GuildManager guildManager = getGuildManager(guild);
+        return guildManager.containsChannel(channel);
     }
 }
